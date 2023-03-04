@@ -1,0 +1,15 @@
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\bin\Debug\net6.0\math testing.exe
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\bin\Debug\net6.0\math testing.deps.json
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\bin\Debug\net6.0\math testing.runtimeconfig.json
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\bin\Debug\net6.0\math testing.dll
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\bin\Debug\net6.0\math testing.pdb
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.csproj.AssemblyReference.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.GeneratedMSBuildEditorConfig.editorconfig
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.AssemblyInfoInputs.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.AssemblyInfo.cs
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.csproj.CoreCompileInputs.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.dll
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\refint\math testing.dll
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.pdb
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\math testing.genruntimeconfig.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\math testing\math testing\obj\Debug\net6.0\ref\math testing.dll

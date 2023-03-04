@@ -14,7 +14,7 @@ namespace SecurityPackageTest
 
         string mainCipher1 = "ttnaaptmtsuoaodwcoiknlpet".ToUpper();
         string mainCipher2 = "ttnaaptmtsuoaodwcoixknlxpetx".ToUpper();
-       
+
         string mainPlain3 = "computerscience";
         string mainPlain4 = "computersciencex";
 
@@ -27,7 +27,7 @@ namespace SecurityPackageTest
 
         string newPlain = "defendtheeastwallofthecastleee";
         string newCipher = "nalceehwttdttfseeleedsoaefeahl";
-        
+
         List<int> newKey = new List<int>() { 3, 2, 6, 4, 1, 5 };
 
         [TestMethod]
@@ -154,3 +154,4 @@ namespace SecurityPackageTest
         }
     }
 }
+

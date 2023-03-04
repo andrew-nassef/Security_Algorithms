@@ -17,5 +17,9 @@ namespace SecurityLibrary
         {
             throw new NotImplementedException();
         }
+        public int Analyse(string plainText)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

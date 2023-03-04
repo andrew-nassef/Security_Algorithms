@@ -12,3 +12,9 @@ F:\GoogleDriveSync\Security 2018-2019\Students\Labs\Lab 1\SecurityPackage\Securi
 F:\GoogleDriveSync\Security 2018-2019\Students\Labs\Lab 1\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csprojResolveAssemblyReference.cache
 F:\GoogleDriveSync\Security 2018-2019\Students\Labs\Lab 1\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.dll
 F:\GoogleDriveSync\Security 2018-2019\Students\Labs\Lab 1\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.pdb
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\bin\Debug\SecurityLibrary.dll
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\bin\Debug\SecurityLibrary.pdb
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.AssemblyReference.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.CoreCompileInputs.cache
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.dll
+F:\Aobz\CS\YEAR 4\SEM 02\Security\Labs\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.pdb
