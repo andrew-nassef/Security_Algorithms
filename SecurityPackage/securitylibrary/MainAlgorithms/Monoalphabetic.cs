@@ -26,7 +26,7 @@ namespace SecurityLibrary
             //Get key from given plain text and cipher text
             List<char> answer = alphapet.ToList();
             for(int i = 0;i < plainText.Length; i++)
-                answer[(int)plainText[i] - 65] = cipherText[i];
+                answer[plainText[i] - 65] = cipherText[i];
 
             //find unused letters in this cipher
             string emptyIndices = "";
@@ -70,7 +70,7 @@ namespace SecurityLibrary
 
             foreach (char c in plainText)
             {
-                answer += key[(int)c - 65];
+                answer += key[c - 65];
             }
 
             return answer;

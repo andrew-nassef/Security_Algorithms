@@ -17,7 +17,7 @@ namespace SecurityLibrary
             string answer = "";
 
             foreach(char c in plainText.ToUpper())
-                answer += (char)((((int)c + key - 65) % 26) + 65);
+                answer += (char)(((c + key - 65) % 26) + 65);
             
             return answer;
         }
@@ -27,14 +27,14 @@ namespace SecurityLibrary
             string answer = "";
 
             foreach (char c in cipherText.ToUpper())
-                answer += (char)((((int)c - 65 - key + 26) % 26) + 65);
+                answer += (char)(((c - 65 - key + 26) % 26) + 65);
 
             return answer;
         }
 
         public int Analyse(string plainText, string cipherText)
         {
-            return (((int)char.ToUpper(cipherText[0]) - 65) - ((int)char.ToUpper(plainText[0]) - 65) + 26) % 26;
+            return ((char.ToUpper(cipherText[0]) - 65) - (char.ToUpper(plainText[0]) - 65) + 26) % 26;
         }
     }
 }
