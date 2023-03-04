@@ -8,19 +8,72 @@ namespace SecurityLibrary
 {
     public class Monoalphabetic : ICryptographicTechnique<string, string>
     {
+        //Convert list of characters to lower case string
+        private string toString(List<char> list) {
+            string tmp = "";
+            foreach (var i in list) tmp += i;
+            return tmp.ToLower();
+        }
+
         public string Analyse(string plainText, string cipherText)
         {
-            throw new NotImplementedException();
+            string alphapet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            //Convert all lists to upper case letters
+            plainText = plainText.ToUpper();
+            cipherText = cipherText.ToUpper();
+
+            //Get key from given plain text and cipher text
+            List<char> answer = alphapet.ToList();
+            for(int i = 0;i < plainText.Length; i++)
+                answer[(int)plainText[i] - 65] = cipherText[i];
+
+            //find unused letters in this cipher
+            string emptyIndices = "";
+            string unMappedChars = "";
+            for (int i = 0; i < alphapet.Length; i++)
+            {
+                if (!plainText.Contains(alphapet[i]))
+                    emptyIndices += alphapet[i];
+                if (!cipherText.Contains(alphapet[i]))
+                    unMappedChars += alphapet[i];
+            }
+
+            //fill un mapped letters we previously searched for
+            for (int i = 0;i < emptyIndices.Length; i++)
+                answer[emptyIndices[i] - 65] = unMappedChars[i];
+
+            //return the final answer
+            return toString(answer);
         }
 
         public string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            string answer = "";
+
+            cipherText = cipherText.ToUpper();
+            key = key.ToUpper();
+            
+            foreach (char c in cipherText)
+            {
+                answer += (char)(key.IndexOf(c) + 65);
+            }
+
+            return answer;
         }
 
         public string Encrypt(string plainText, string key)
         {
-            throw new NotImplementedException();
+            string answer = "";
+
+            plainText = plainText.ToUpper();
+
+            foreach (char c in plainText)
+            {
+                answer += key[(int)c - 65];
+            }
+
+            return answer;
         }
 
         /// <summary>
