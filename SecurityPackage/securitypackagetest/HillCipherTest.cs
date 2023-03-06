@@ -8,8 +8,8 @@ namespace SecurityPackageTest
     [TestClass]
     public class HillCipherTest
     {
-        List<int> key = new List<int>() { 3, 2, 8, 5 };
-        List<int> plain = new List<int>() { 15, 0, 24, 12, 14, 17, 4, 12, 14, 13, 4, 24 };
+        List<int> key = new List<int>() { 3, 2, 8, 5 };//2*2
+        List<int> plain = new List<int>() { 15, 0, 24, 12, 14, 17, 4, 12, 14, 13, 4, 24 };//2*6
         List<int> cipher = new List<int>() { 19, 16, 18, 18, 24, 15, 10, 14, 16, 21, 8, 22 };
 
         string mainPlain = "paymoremoney";

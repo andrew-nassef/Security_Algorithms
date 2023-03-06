@@ -11,15 +11,33 @@ namespace SecurityLibrary
     /// </summary>
     public class HillCipher :  ICryptographicTechnique<List<int>, List<int>>
     {
-        private int[,] toMatrix(List<int> list, int m)
+        enum MatrixType
         {
+            Key,
+            Plain
+        };
+        private int[,] toMatrix(List<int> list, int m,MatrixType matrixType)
+        {
+            int[,] matrix;
             int n = list.Count / m;
-            int[,] matrix = new int[n ,m];
-            for(int i = 0; i < n; i++)
+
+            if (matrixType == MatrixType.Key)
+                matrix = new int[m, m];
+            else
+                matrix = new int[m, n];
+
+            for(int i = 0; i < m; i++)
             {
-                for(int j = 0; j < m; j++)
+                int index = i;
+                for(int j = 0; j < n; j++)
                 {
-                    matrix[i, j] = list[i * n + j];
+                    if (matrixType == MatrixType.Key)
+                        matrix[i, j] = list[i * n + j];
+                    else
+                    {
+                        matrix[i, j] = list[index];
+                        index += m;
+                    }
                 }
             }
             return matrix;
@@ -34,13 +52,39 @@ namespace SecurityLibrary
         {
             throw new NotImplementedException();
         }
-
+        private static int[,] MatrixMult(int[,] matrix1, int[,] matrix2)
+        {
+            int[,] result = new int[matrix1.GetLength(0), matrix2.GetLength(1)];
+            for (int i = 0; i < result.GetLength(0); i++)
+                for (int j = 0; j < result.GetLength(1); j++)
+                    result[i, j] = 0;
+            for (int i = 0; i < matrix1.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix1.GetLength(1); j++)
+                {
+                    for (int k = 0; k < matrix2.GetLength(1); k++)
+                    {
+                        result[i, k] += matrix1[i, j] * matrix2[j, k];
+                    }
+                }
+            }
+            return result;
+        }
 
         public List<int> Encrypt(List<int> plainText, List<int> key)
         {
-            int[,] matrix = toMatrix(plainText, key.Count);
-            List<int> result = new List<int>();
+            int[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
+            int[,] plainTextMatrix = toMatrix(plainText, keyMatrix.GetLength(1), MatrixType.Plain);
+            int[,] res = MatrixMult(keyMatrix, plainTextMatrix);
 
+            List<int> result = new List<int>();
+            for (int i = 0; i < res.GetLength(1); i++)
+            {
+                for(int j = 0;j<res.GetLength(0); j++)
+                {
+                    result.Add(res[j, i] % 26);
+                }
+            }
             return result;
         }
 
