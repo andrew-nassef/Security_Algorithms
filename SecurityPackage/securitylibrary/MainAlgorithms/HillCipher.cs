@@ -16,15 +16,23 @@ namespace SecurityLibrary
             Key,
             Plain
         };
-        private int[,] toMatrix(List<int> list, int m,MatrixType matrixType)
+        // calculate modules
+        private int mod(int det, int mod)
         {
-            int[,] matrix;
+            if (det >= 0) return det % mod;
+            else return mod - (det * -1 % mod);
+        }
+
+        //Convert a 1d list to a 2d matrix
+        private float[,] toMatrix(List<int> list, int m,MatrixType matrixType)
+        {
+            float[,] matrix;
             int n = list.Count / m;
 
             if (matrixType == MatrixType.Key)
-                matrix = new int[m, m];
+                matrix = new float[m, m];
             else
-                matrix = new int[m, n];
+                matrix = new float[m, n];
 
             for(int i = 0; i < m; i++)
             {
@@ -42,19 +50,22 @@ namespace SecurityLibrary
             }
             return matrix;
         }
-        public List<int> Analyse(List<int> plainText, List<int> cipherText)
+        private List<int> toList(float[,] matrix)
         {
-            throw new NotImplementedException();
+            List<int> result = new List<int>();
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(0); j++)
+                {
+                    result.Add(mod((int)matrix[j, i]%26 , 26));
+                }
+            }
+            return result;
         }
 
-
-        public List<int> Decrypt(List<int> cipherText, List<int> key)
+        private float[,] MatrixMult(float[,] matrix1, float[,] matrix2)
         {
-            throw new NotImplementedException();
-        }
-        private static int[,] MatrixMult(int[,] matrix1, int[,] matrix2)
-        {
-            int[,] result = new int[matrix1.GetLength(0), matrix2.GetLength(1)];
+            float[,] result = new float[matrix1.GetLength(0), matrix2.GetLength(1)];
             for (int i = 0; i < result.GetLength(0); i++)
                 for (int j = 0; j < result.GetLength(1); j++)
                     result[i, j] = 0;
@@ -70,24 +81,126 @@ namespace SecurityLibrary
             }
             return result;
         }
-
+        //convert 2d matrix to 1d list
+        
         public List<int> Encrypt(List<int> plainText, List<int> key)
         {
-            int[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
-            int[,] plainTextMatrix = toMatrix(plainText, keyMatrix.GetLength(1), MatrixType.Plain);
-            int[,] res = MatrixMult(keyMatrix, plainTextMatrix);
-
-            List<int> result = new List<int>();
-            for (int i = 0; i < res.GetLength(1); i++)
-            {
-                for(int j = 0;j<res.GetLength(0); j++)
-                {
-                    result.Add(res[j, i] % 26);
-                }
-            }
-            return result;
+            // convert key to MxM matrix
+            float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
+            // convert plain text to MxN matrix
+            float[,] plainTextMatrix = toMatrix(plainText, keyMatrix.GetLength(1), MatrixType.Plain);
+            // K * P.T
+            float[,] result = MatrixMult(keyMatrix, plainTextMatrix);
+            return toList(result);
+        }
+        //---------------------------------------------
+        //calculate determinants
+        private int det(float[,] matrix)
+        {
+            if (matrix.GetLength(0) == 2)
+                return det2by2Matrix(matrix);
+            else
+                return det3by3Matrix(matrix);
+        }
+        private int det3by3Matrix(float[,] matrix)
+        {
+            return (int)(matrix[0, 0] * det2by2Matrix(new float[2, 2] { { matrix[1, 1], matrix[1, 2] }, { matrix[2, 1], matrix[2, 2] } })
+                - matrix[0, 1] * det2by2Matrix(new float[2, 2] { { matrix[1, 0], matrix[1, 2] }, { matrix[2, 0], matrix[2, 2] } })
+                + matrix[0, 2] * det2by2Matrix(new float[2, 2] { { matrix[1, 0], matrix[1, 1] }, { matrix[2, 0], matrix[2, 1] } }));
+        }
+        private int det2by2Matrix(float[,] matrix)
+        {
+            return (int)(matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
         }
 
+        //-------------------------Determinant section end-----------------------
+        //---------------------------------------------
+        //Matrices Inverse
+        private float[,] InverseMatrix(float[,] matrix)
+        {
+            if (matrix.GetLength(0) == 2)
+                return InverseMatrix2x2(matrix);
+            else
+                return InverseMatrix3x3(matrix);
+        }
+        private int inv(int dt)
+        {
+            for(int i = 1; i< 26; i++)
+            {
+                if(dt * i % 26 == 1) return i;
+            }
+            return -1;
+        }
+        private float[,] InverseMatrix3x3(float[,] matrix)
+        {
+            int dt = mod(det(matrix), 26);
+            dt = inv(dt);
+            float[,] cofactorsMatrix = new float[3, 3];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    int a = 0, b = 0;
+                    float[,] tmp = new float[2, 2];
+                    for (int k = 0; k < 3; k++)
+                    {
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (i != k && j != z)
+                            {
+                                tmp[a, b] = matrix[k, z];
+                                if (b < 1) b++;
+                                else
+                                {
+                                    a++;
+                                    b = 0;
+                                }
+                            }
+                        }
+                    }
+                    cofactorsMatrix[i, j] = det(tmp) * dt;
+                    if ((i * 3 + j) % 2 != 0) cofactorsMatrix[i, j] *= -1;
+                }
+            }
+            float[,] transposedMatrix = MatrixTranspose(cofactorsMatrix);
+            return transposedMatrix;
+        }
+
+        private float[,] MatrixTranspose(float[,] matrix)
+        {
+            float[,] tmp = new float[matrix.GetLength(0), matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(0); i++)
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                    tmp[j, i] = matrix[i, j];
+
+            return tmp;
+        }
+
+        private float[,] InverseMatrix2x2(float[,] matrix)
+        {
+            float dt = det(matrix);
+            float tmp = matrix[0, 0];
+            matrix[0, 0] = mod((int)(matrix[1, 1] / dt), 26);
+            matrix[1, 1] = mod((int)(tmp / dt),26);
+            matrix[0, 1] = mod((int)(matrix[0, 1] * - 1 / dt), 26);
+            matrix[1, 0] = mod((int)(matrix[1, 0] * - 1 / dt), 26);
+            return matrix;
+        }
+        public List<int> Decrypt(List<int> cipherText, List<int> key)
+        {
+            float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
+            float[,] cipherTextMatrix = toMatrix(cipherText, keyMatrix.GetLength(1), MatrixType.Plain);
+            float[,] keyDash = InverseMatrix(keyMatrix);
+
+            float[,] res = MatrixMult(keyDash, cipherTextMatrix);
+
+            return toList(res);
+        }
+        //-------------------------Inverses section end-----------------------
+        public List<int> Analyse(List<int> plainText, List<int> cipherText)
+        {
+            throw new NotImplementedException();
+        }
 
         public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
         {
