@@ -16,7 +16,19 @@ namespace SecurityLibrary
 
         public string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            key = key.ToUpper();
+            int index = 0;
+            int shift = 0;
+            string plainText = "";
+           for(int c = 0; c < cipherText.Length; c++)
+            {
+                index = cipherText[c] - 65;
+                shift = index - (key[c] - 65);
+                plainText += (char)(shift + 65);
+
+            }
+            return plainText;
+            //throw new NotImplementedException();
         }
 
         public string Encrypt(string plainText, string key)
