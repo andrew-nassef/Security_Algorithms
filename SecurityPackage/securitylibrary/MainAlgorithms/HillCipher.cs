@@ -123,7 +123,7 @@ namespace SecurityLibrary
             else
                 return InverseMatrix3x3(matrix);
         }
-        private int inv(int dt)
+        private int det_neg_1(int dt)
         {
             for(int i = 1; i< 26; i++)
             {
@@ -134,7 +134,7 @@ namespace SecurityLibrary
         private float[,] InverseMatrix3x3(float[,] matrix)
         {
             int dt = mod(det(matrix), 26);
-            dt = inv(dt);
+            dt = det_neg_1(dt);
             float[,] cofactorsMatrix = new float[3, 3];
             for (int i = 0; i < 3; i++)
             {
@@ -178,12 +178,13 @@ namespace SecurityLibrary
 
         private float[,] InverseMatrix2x2(float[,] matrix)
         {
-            float dt = det(matrix);
+            int dt = mod(det(matrix), 26);
+            dt = det_neg_1(dt);
             float tmp = matrix[0, 0];
-            matrix[0, 0] = mod((int)(matrix[1, 1] / dt), 26);
-            matrix[1, 1] = mod((int)(tmp / dt),26);
-            matrix[0, 1] = mod((int)(matrix[0, 1] * - 1 / dt), 26);
-            matrix[1, 0] = mod((int)(matrix[1, 0] * - 1 / dt), 26);
+            matrix[0, 0] = mod((int)(matrix[1, 1] * dt), 26);
+            matrix[1, 1] = mod((int)(tmp * dt),26);
+            matrix[0, 1] = mod((int)(matrix[0, 1] * - 1 * dt), 26);
+            matrix[1, 0] = mod((int)(matrix[1, 0] * - 1 * dt), 26);
             return matrix;
         }
         public List<int> Decrypt(List<int> cipherText, List<int> key)
@@ -199,7 +200,12 @@ namespace SecurityLibrary
         //-------------------------Inverses section end-----------------------
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            throw new NotImplementedException();
+            float[,] plainMatrix = toMatrix(plainText, 2, MatrixType.Plain);
+            float[,] cipherMatrix = toMatrix(cipherText,cipherText.Count / 2 , MatrixType.Plain);
+            float[,] res = MatrixMult(plainMatrix, cipherMatrix);
+            List<int> key = toList(res);
+
+            return key;
         }
 
         public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)

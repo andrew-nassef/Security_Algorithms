@@ -13,7 +13,7 @@ namespace SecurityLibrary.AES
         /// </summary>
         /// <param name="number"></param>
         /// <param name="baseN"></param>
-        /// <returns>Mul inverse, -1 if no inv</returns>
+        /// <returns>Mul inverse, -1 if no det_neg_1</returns>
         public int GetMultiplicativeInverse(int number, int baseN)
         {
             throw new NotImplementedException();
