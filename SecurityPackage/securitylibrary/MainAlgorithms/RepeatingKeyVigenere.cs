@@ -35,17 +35,12 @@ namespace SecurityLibrary
                 {
                     key += key[i];
                 }
-
-                
-
             }
 
             for(int p = 0; p < plainText.Length; p++)
             {
                 shift = plainText[p] - 65;
-                cipherText += (char)(((key[p] + shift)% 26) + 65);
-
-
+                cipherText += (char)(((key[p] - 65 + shift)% 26) + 65);
             }
             return cipherText;
                
