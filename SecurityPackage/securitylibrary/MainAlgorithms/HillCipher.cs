@@ -83,16 +83,6 @@ namespace SecurityLibrary
         }
         //convert 2d matrix to 1d list
         
-        public List<int> Encrypt(List<int> plainText, List<int> key)
-        {
-            // convert key to MxM matrix
-            float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
-            // convert plain text to MxN matrix
-            float[,] plainTextMatrix = toMatrix(plainText, keyMatrix.GetLength(1), MatrixType.Plain);
-            // K * P.T
-            float[,] result = MatrixMult(keyMatrix, plainTextMatrix);
-            return toList(result);
-        }
         //---------------------------------------------
         //calculate determinants
         private int det(float[,] matrix)
@@ -112,7 +102,14 @@ namespace SecurityLibrary
         {
             return (int)(matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
         }
-
+        private int det_neg_1(int dt)
+        {
+            for (int i = 1; i < 26; i++)
+            {
+                if (dt * i % 26 == 1) return i;
+            }
+            return -1;
+        }
         //-------------------------Determinant section end-----------------------
         //---------------------------------------------
         //Matrices Inverse
@@ -123,14 +120,7 @@ namespace SecurityLibrary
             else
                 return InverseMatrix3x3(matrix);
         }
-        private int det_neg_1(int dt)
-        {
-            for(int i = 1; i< 26; i++)
-            {
-                if(dt * i % 26 == 1) return i;
-            }
-            return -1;
-        }
+        
         private float[,] InverseMatrix3x3(float[,] matrix)
         {
             int dt = mod(det(matrix), 26);
@@ -187,6 +177,18 @@ namespace SecurityLibrary
             matrix[1, 0] = mod((int)(matrix[1, 0] * - 1 * dt), 26);
             return matrix;
         }
+        //-------------------------Inverses section end-----------------------
+
+        public List<int> Encrypt(List<int> plainText, List<int> key)
+        {
+            // convert key to MxM matrix
+            float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
+            // convert plain text to MxN matrix
+            float[,] plainTextMatrix = toMatrix(plainText, keyMatrix.GetLength(1), MatrixType.Plain);
+            // K * P.T
+            float[,] result = MatrixMult(keyMatrix, plainTextMatrix);
+            return toList(result);
+        }
         public List<int> Decrypt(List<int> cipherText, List<int> key)
         {
             float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
@@ -197,7 +199,6 @@ namespace SecurityLibrary
 
             return toList(res);
         }
-        //-------------------------Inverses section end-----------------------
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
             float[,] plainMatrix = toMatrix(plainText, 2, MatrixType.Plain);
