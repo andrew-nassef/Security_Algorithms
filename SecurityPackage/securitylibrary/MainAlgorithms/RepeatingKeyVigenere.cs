@@ -10,6 +10,7 @@ namespace SecurityLibrary
     {
         public string Analyse(string plainText, string cipherText)
         {
+
             throw new NotImplementedException();
         }
 
@@ -20,7 +21,36 @@ namespace SecurityLibrary
 
         public string Encrypt(string plainText, string key)
         {
-            throw new NotImplementedException();
+            plainText = plainText.ToUpper();
+            key = key.ToUpper();
+            int shift = 0;
+            string cipherText = "";
+
+
+
+            if (key.Length < plainText.Length)
+            {
+                int remain = plainText.Length - key.Length;
+                for(int i =  0;i < remain;i++)
+                {
+                    key += key[i];
+                }
+
+                
+
+            }
+
+            for(int p = 0; p < plainText.Length; p++)
+            {
+                shift = plainText[p] - 65;
+                cipherText += (char)(((key[p] + shift)% 26) + 65);
+
+
+            }
+            return cipherText;
+               
+                
+            //throw new NotImplementedException();
         }
     }
 }
