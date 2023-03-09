@@ -99,7 +99,12 @@ namespace SecurityPackageTest
         {
             PlayFair algorithm = new PlayFair();
             string plain = algorithm.Decrypt(largeCipher, largeKey);
-            Console.WriteLine(plain.Length + " " + largeCipher.Length);
+            Console.WriteLine(plain.Length + " " + largePlain.Length);
+            for (int i = 0; i < plain.Length; i++)
+                if (plain[i] == largePlain[i])
+                    Console.WriteLine(plain[i] + " " + largePlain[i]);
+                else
+                    Console.WriteLine(i + "--------------" + plain[i] + " " + largePlain[i]);
            
             Assert.IsTrue(plain.Equals(largePlain, StringComparison.InvariantCultureIgnoreCase));
         }

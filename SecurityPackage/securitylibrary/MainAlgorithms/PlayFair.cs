@@ -163,35 +163,56 @@ namespace SecurityLibrary
             //2- Divide the plain text into pairs
             List<string> pairs = makePairsDec(cipherText.ToUpper());
 
-            string tmpAnswer = "";
+            string plainText = "";
             for (int i = 0; i < pairs.Count; i++)
             {
-                int[,] positions = findPositions(pairs[i], matrix);
-                // same row
-                if (positions[0, 0] == positions[1, 0])
+                bool isTrueX = true;
+                string tmp = getDecrypt(pairs[i], matrix);
+                
+                if (tmp[1] == 'X')
                 {
-                    tmpAnswer += matrix[positions[0, 0], (positions[0, 1] - 1 + 5) % 5];
-                    //if (matrix[positions[1, 0], (positions[1, 1] - 1 + 5) % 5] != 'X')
-                    tmpAnswer += matrix[positions[1, 0], (positions[1, 1] - 1 + 5) % 5];
+                    if(i < pairs.Count - 1)
+                    {
+                        string tmp2 = getDecrypt(pairs[i + 1], matrix);
+                        if (tmp2[0] == tmp[0])
+                            isTrueX = false;
+                    }
+                    else 
+                        isTrueX = false;
                 }
-                // same column
-                else if (positions[0, 1] == positions[1, 1])
-                {
-                    tmpAnswer += matrix[(positions[0, 0] - 1 + 5) % 5, positions[0, 1]];
-                   // if (matrix[(positions[1, 0] - 1 + 5) % 5, positions[1, 1]] != 'X')
-                    tmpAnswer += matrix[(positions[1, 0] - 1 + 5) % 5, positions[1, 1]];
-                }
-                // neither
-                else
-                {
-                    tmpAnswer += matrix[positions[0, 0], positions[1, 1]];
-                    if (matrix[positions[1, 0], positions[0, 1]] != 'X')
-                        tmpAnswer += matrix[positions[1, 0], positions[0, 1]];
-                }
+
+                if (isTrueX)
+                    plainText += tmp;
+                else 
+                    plainText += tmp[0];
             }
             
-           return tmpAnswer.ToLower();
+           return plainText.ToLower();
         }
 
+        private string getDecrypt(string pair, char[,] matrix)
+        {
+            int[,] positions = findPositions(pair, matrix);
+            string tmp = "";
+            // same row
+            if (positions[0, 0] == positions[1, 0])
+            {
+                tmp += matrix[positions[0, 0], (positions[0, 1] - 1 + 5) % 5];
+                tmp += matrix[positions[1, 0], (positions[1, 1] - 1 + 5) % 5];
+            }
+            // same column
+            else if (positions[0, 1] == positions[1, 1])
+            {
+                tmp += matrix[(positions[0, 0] - 1 + 5) % 5, positions[0, 1]];
+                tmp += matrix[(positions[1, 0] - 1 + 5) % 5, positions[1, 1]];
+            }
+            // neither
+            else
+            {
+                tmp += matrix[positions[0, 0], positions[1, 1]];
+                tmp += matrix[positions[1, 0], positions[0, 1]];
+            }
+        return tmp;
+        }
     }
 }
