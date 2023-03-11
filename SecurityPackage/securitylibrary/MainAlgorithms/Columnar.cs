@@ -8,42 +8,20 @@ namespace SecurityLibrary
 {
     public class Columnar : ICryptographicTechnique<string, List<int>>
     {
-        char[,] createPlainMatrix(string plainText, List<int> key)
-        {
-            int N = plainText.Length % key.Count == 0 ? plainText.Length / key.Count : plainText.Length / key.Count + 1;
-            char[,] matrix = new char[N, key.Count];
-            int letterIndex = 0;
-            int i = 0;
-            for (int r = 0; r < matrix.GetLength(0); r++)
-            {
-                for (int c = 0; c < key.Count; c++)
-                {
-                    if (letterIndex < plainText.Length)
-                    {
-                        matrix[r, c] = plainText[letterIndex];
-                        letterIndex++;
-                    }
-                    else
-                    {
-                        matrix[r, c] = 'X';
-                    } 
-                }
-            }
-            return matrix;
-        }
-
         public string Encrypt(string plainText, List<int> key)
         {
             plainText = plainText.ToUpper();
             string cipherText = "";
-            char[,] PT_matrix = createPlainMatrix(plainText, key);
+            int N = plainText.Length % key.Count == 0 ? plainText.Length / key.Count : plainText.Length / key.Count + 1;
 
             for (int c = 0; c < key.Count; c++)
             {
                 int numIndex = key.IndexOf(c + 1);
-                for (int r = 0; r < PT_matrix.GetLength(0); r++)
+                for (int r = 0; r < N; r++)
                 {
-                    cipherText += PT_matrix[r, numIndex];
+                    //cipherText += PT_matrix[r, numIndex];
+                    if(r * key.Count + numIndex < plainText.Length)
+                    cipherText += plainText[r * key.Count + numIndex];
                 }
 
             }
@@ -108,13 +86,13 @@ namespace SecurityLibrary
 
         public List<int> Analyse(string plainText, string cipherText)
         {
-            for(int i = 3; i < 8; i++)
+            cipherText = cipherText.ToUpper();
+            for (int i = 3; i < 10; i++)
             {
                 result = new List<List<int>>();
                 backtrack(new List<int>(), i);
                 for(int j = 0; j < result.Count; j++)
                 {
-                    string cy = Encrypt(plainText, result[j]);
                     if (Encrypt(plainText, result[j]) == cipherText)
                         return result[j];
                 }
