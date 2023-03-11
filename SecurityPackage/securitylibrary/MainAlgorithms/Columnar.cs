@@ -87,7 +87,7 @@ namespace SecurityLibrary
         public List<int> Analyse(string plainText, string cipherText)
         {
             cipherText = cipherText.ToUpper();
-            for (int i = 3; i < 10; i++)
+            for (int i = 3; i < 15; i++)
             {
                 result = new List<List<int>>();
                 backtrack(new List<int>(), i);

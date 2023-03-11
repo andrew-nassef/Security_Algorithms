@@ -62,7 +62,6 @@ namespace SecurityLibrary
             }
             return result;
         }
-
         private float[,] MatrixMult(float[,] matrix1, float[,] matrix2)
         {
             float[,] result = new float[matrix1.GetLength(0), matrix2.GetLength(1)];
@@ -95,14 +94,11 @@ namespace SecurityLibrary
         }
         private int det3by3Matrix(float[,] matrix)
         {
-            return (int)(matrix[0, 0] * det2by2Matrix(new float[2, 2] { { matrix[1, 1], matrix[1, 2] }, { matrix[2, 1], matrix[2, 2] } })
+        return (int)(matrix[0, 0] * det2by2Matrix(new float[2, 2] { { matrix[1, 1], matrix[1, 2] }, { matrix[2, 1], matrix[2, 2] } })
                 - matrix[0, 1] * det2by2Matrix(new float[2, 2] { { matrix[1, 0], matrix[1, 2] }, { matrix[2, 0], matrix[2, 2] } })
                 + matrix[0, 2] * det2by2Matrix(new float[2, 2] { { matrix[1, 0], matrix[1, 1] }, { matrix[2, 0], matrix[2, 1] } }));
         }
-        private int det2by2Matrix(float[,] matrix)
-        {
-            return (int)(matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
-        }
+        private int det2by2Matrix(float[,] matrix) => (int)(matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
         private int det_neg_1(int dt)
         {
             for (int i = 1; i < 26; i++)
@@ -116,7 +112,7 @@ namespace SecurityLibrary
         //Matrices Inverse
         private float[,] InverseMatrix(float[,] matrix)
         {
-            if (matrix.GetLength(0) == 2)
+            if (matrix.GetLength(0) == 2 && isInvertable(matrix))
                 return InverseMatrix2x2(matrix);
             else
                 return InverseMatrix3x3(matrix);
@@ -177,6 +173,16 @@ namespace SecurityLibrary
             matrix[0, 1] = mod((int)(matrix[0, 1] * - 1 * dt), 26);
             matrix[1, 0] = mod((int)(matrix[1, 0] * - 1 * dt), 26);
             return matrix;
+        }
+        private bool isInvertable(float[,] matrix)
+        {
+            if (det(matrix) == 0) throw new Exception();
+            
+            if(matrix.GetLength(0) == 3)
+            {
+                if(det(matrix) == 0) throw new Exception();
+            }
+            return false;
         }
         //-------------------------Inverses section end-----------------------
 
