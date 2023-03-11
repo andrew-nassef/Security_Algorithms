@@ -32,6 +32,24 @@ namespace SecurityLibrary
             return matrix;
         }
 
+        public string Encrypt(string plainText, List<int> key)
+        {
+            plainText = plainText.ToUpper();
+            string cipherText = "";
+            char[,] PT_matrix = createPlainMatrix(plainText, key);
+
+            for (int c = 0; c < key.Count; c++)
+            {
+                int numIndex = key.IndexOf(c + 1);
+                for (int r = 0; r < PT_matrix.GetLength(0); r++)
+                {
+                    cipherText += PT_matrix[r, numIndex];
+                }
+
+            }
+            return cipherText;
+            //throw new NotImplementedException();
+        }
         char[,] createCipherMatrix(string cipherText, List<int> key)
         {
             char[,] matrix = new char[(cipherText.Length / key.Count), key.Count];
@@ -49,12 +67,6 @@ namespace SecurityLibrary
             return matrix;
         }
 
-        public List<int> Analyse(string plainText, string cipherText)
-        {
-            
-            throw new NotImplementedException();
-        }
-
         public string Decrypt(string cipherText, List<int> key)
         {
             char[,] CT_matrix = createCipherMatrix(cipherText, key);
@@ -70,25 +82,45 @@ namespace SecurityLibrary
             return plainText;
            // throw new NotImplementedException();
         }
-
-        public string Encrypt(string plainText, List<int> key)
+        // Generating permutation using Heap Algorithm
+        List<List<int>> result;
+        void backtrack(List<int> s, int size)
         {
-            plainText = plainText.ToUpper();
-            string cipherText = "";
-            char[,] PT_matrix = createPlainMatrix(plainText, key);
-
-            for (int c = 0; c < key.Count; c++)
+            if (s.Count == size)
             {
-                int numIndex = key.IndexOf(c +1);
-                for (int r = 0; r < PT_matrix.GetLength(0); r++)
+                for (int i = 0; i < size; i++)
                 {
-
-                    cipherText += PT_matrix[r, numIndex];
+                    for (int j = i + 1; j < size; j++)
+                    {
+                        if (s[i] == s[j]) return;
+                    }
                 }
-
+                result.Add(s.ToList());
+                return;
             }
-            return cipherText;
-            //throw new NotImplementedException();
+            for (int i = 1; i <= size; i++)
+            {
+                s.Add(i);
+                backtrack(s, size);
+                s.RemoveAt(s.Count - 1);
+            }
         }
+
+        public List<int> Analyse(string plainText, string cipherText)
+        {
+            for(int i = 3; i < 8; i++)
+            {
+                result = new List<List<int>>();
+                backtrack(new List<int>(), i);
+                for(int j = 0; j < result.Count; j++)
+                {
+                    string cy = Encrypt(plainText, result[j]);
+                    if (Encrypt(plainText, result[j]) == cipherText)
+                        return result[j];
+                }
+            }
+            return null;
+        }
+
     }
 }

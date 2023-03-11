@@ -1,10 +1,37 @@
-﻿internal class Program
-{
+﻿using System.Numerics;
 
+internal class Program
+{
+    static List<List<int>> result = new List<List<int>>();
+    static void backtrack(List<int> s, int size)
+    {
+        if (s.Count == size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = i + 1; j < size; j++)
+                {
+                    if (s[i] == s[j]) return;
+                }
+            }
+            result.Add(s);
+            return;
+        }
+        for (int i = 1; i <= size; i++)
+        {
+            s.Add(i);
+            backtrack(s, size);
+            s.RemoveAt(s.Count - 1);
+        }
+    }
     private static void Main(string[] args)
     {
+
+        backtrack(new List<int>(),5);
+        int c = result.Count;
+
         Console.WriteLine((float)(1 / 3 % 26));
-        float[,] mat1 = new float[3, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+       /* float[,] mat1 = new float[3, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
         float[,] mat2 = new float[4, 3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }, { 10, 11, 12 } };
         float[,] mat = MatrixMult(mat1, mat2);
         foreach (int i in mat)Console.WriteLine(i);
@@ -25,7 +52,7 @@
         float[,] xdash2x2 = InverseMatrix(x22);
         float[,] xdash3x3 = InverseMatrix(x33);
         foreach (float i in xdash3x3) Console.WriteLine(i);
-        Console.WriteLine("----------------------------------------------------------");
+        Console.WriteLine("----------------------------------------------------------");*/
     }
     private static int sign(int n) => n < 0 ? -1 : 1;
 
