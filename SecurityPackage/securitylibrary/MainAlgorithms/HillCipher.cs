@@ -101,21 +101,27 @@ namespace SecurityLibrary
         private int det2by2Matrix(float[,] matrix) => (int)(matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
         private int det_neg_1(int dt)
         {
-            for (int i = 1; i < 26; i++)
+            for (int i = 0; i <= 26; i++)
             {
                 if (dt * i % 26 == 1) return i;
             }
-            return -1;
+            //if there is no possible solution
+            throw new SystemException();
         }
         //-------------------------Determinant section end-----------------------
         //---------------------------------------------
         //Matrices Inverse
         private float[,] InverseMatrix(float[,] matrix)
         {
-            if (matrix.GetLength(0) == 2 && isInvertable(matrix))
-                return InverseMatrix2x2(matrix);
+            if (matrix.GetLength(0) == 2)
+            {
+                if (isInvertable(matrix))
+                    return InverseMatrix2x2(matrix);
+            }
             else
                 return InverseMatrix3x3(matrix);
+
+            throw new Exception();
         }
         
         private float[,] InverseMatrix3x3(float[,] matrix)
@@ -147,6 +153,7 @@ namespace SecurityLibrary
                     }
                     cofactorsMatrix[i, j] = det(tmp) * dt;
                     if ((i * 3 + j) % 2 != 0) cofactorsMatrix[i, j] *= -1;
+                    cofactorsMatrix[i, j] = mod((int)cofactorsMatrix[i, j], 26);
                 }
             }
             float[,] transposedMatrix = MatrixTranspose(cofactorsMatrix);
@@ -176,13 +183,13 @@ namespace SecurityLibrary
         }
         private bool isInvertable(float[,] matrix)
         {
-            if (det(matrix) == 0) throw new Exception();
+            if (det(matrix) == 0) throw new SystemException();
             
             if(matrix.GetLength(0) == 3)
             {
                 if(det(matrix) == 0) throw new Exception();
             }
-            return false;
+            return true;
         }
         //-------------------------Inverses section end-----------------------
 
@@ -200,25 +207,44 @@ namespace SecurityLibrary
         {
             float[,] keyMatrix = toMatrix(key, (int)Math.Sqrt(key.Count), MatrixType.Key);
             float[,] cipherTextMatrix = toMatrix(cipherText, keyMatrix.GetLength(1), MatrixType.Plain);
-            float[,] keyDash = InverseMatrix(keyMatrix);
+            keyMatrix = InverseMatrix(keyMatrix);
 
-            float[,] res = MatrixMult(keyDash, cipherTextMatrix);
+            float[,] res = MatrixMult(keyMatrix, cipherTextMatrix);
 
             return toList(res);
         }
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            float[,] plainMatrix = toMatrix(plainText, 2, MatrixType.Plain);
-            float[,] cipherMatrix = toMatrix(cipherText,cipherText.Count / 2 , MatrixType.Plain);
-            float[,] res = MatrixMult(plainMatrix, cipherMatrix);
-            List<int> key = toList(res);
-
-            return key;
+            for (int i = 0; i < 26; i++)
+            {
+                for (int j = 0; j < 26; j++)
+                {
+                    for (int k = 0; k < 26; k++)
+                    {
+                        for (int l = 0; l < 26; l++)
+                        {
+                            List<int> Key = new List<int>{ i, j, k, l };
+                            if (Encrypt(plainText, Key).SequenceEqual(cipherText))
+                                return Key;
+                        }
+                    }
+                }
+            }
+            // if key not found
+            throw new InvalidAnlysisException();
         }
 
         public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
         {
-            throw new NotImplementedException();
+            float[,] plainMatrix = toMatrix(plainText, 3, MatrixType.Plain);
+            float[,] cipherMatrix = toMatrix(cipherText, cipherText.Count / 3, MatrixType.Key);
+            plainMatrix = InverseMatrix(plainMatrix);
+            plainMatrix = MatrixTranspose(plainMatrix);
+
+            float[,] res = MatrixMult(plainMatrix, cipherMatrix);
+            List<int> key = toList(res);
+
+            return key;
         }
 
     }
