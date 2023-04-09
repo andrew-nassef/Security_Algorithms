@@ -33,6 +33,12 @@ namespace SecurityLibrary.AES
         {1, 1, 2, 3 },
         {3, 1, 1, 2 }
         };
+        public static int[,] RijndaelInverseMixColumnsMatrix = new int[,]{
+            { 14, 11, 13, 09 },
+            { 09, 14, 11, 13 },
+            { 13, 09, 14, 11 },
+            { 11, 13, 09, 14 }
+        };
         public static byte[,] RCtable = new byte[,] {
         {0x01, 0x00, 0x00, 0x00 },
         {0x02, 0x00, 0x00, 0x00 },
@@ -63,16 +69,26 @@ namespace SecurityLibrary.AES
             if (s.Length == 1) s = "0" + s;
             return SBox[mapToIndex((int)s[0]), mapToIndex((int)s[1])].ToString("X");
         }
-
-        private static string fixLength(string s, int length)
+        private static string toString(int i, int j)
         {
-            string tmp = "";
-            for (int i = 0; i < length - s.Length; i++)
-            {
-                tmp += "0";
-            }
-            return tmp + s;
+            string s1 = Convert.ToString(i, 16).ToUpper();
+            string s2 = Convert.ToString(j, 16).ToUpper();
+            return s1 + s2;
         }
+        static public string replaceFromReversedSBox(string s)
+        {
+            for(int i = 0; i < SBox.GetLength(0); i++)
+            {
+                for(int j = 0; j < SBox.GetLength(1); j++)
+                {
+                    if (s == SBox[i, j].ToString("X")) return toString(i, j);
+                }
+            }
+            return "";
+        }
+        //
+        private static string fixLength(string s, int length) => s.PadLeft(length, '0');
+        
         private static string XOR(string v1, string v2)
         {
             int fixedLength = Math.Max(v1.Length, v2.Length);
@@ -94,39 +110,48 @@ namespace SecurityLibrary.AES
 
             return XOR_value;
         }
+        // multiply two numbers in binary system
+        private static string binaryMultiplication(string a, string b)
+        {
+            string result = "";
+            string zeros = "";
+            for(int i = b.Length - 1;i >= 0; i--)
+            {
+                if (b[i] == '1')
+                {
+                    if (result == "")
+                        result = a;
+                    else result = XOR(result, a + zeros);
+                }
+                else
+                    result = XOR(result, "0");
+                zeros += '0';
+            }
 
-        static private string mult(int a, int b) {
-            if(a == 1)
-                return Convert.ToString(b, 2);
-            else if(a == 2)
-            {
-                int result = a * b;
-                if (result > 255)
-                {
-                    string s = Convert.ToString(result, 2);
-                    string ans = XOR(s, "11011");
-                    return ans.Substring(ans.Length - 8);
-                }
-                else
-                    return Convert.ToString(result, 2);
-            }
-            else
-            {
-                int result = 2 * b;
-                if (result > 255)
-                {
-                    string s = Convert.ToString(result, 2);
-                    s = XOR(XOR(s, "11011"), Convert.ToString(b, 2));
-                    return s.Substring(s.Length - 8);
-                }
-                else
-                    return XOR(Convert.ToString(result, 2), Convert.ToString(b, 2));
-            }
-            
+            return result;
         }
 
-        static public string[,] MatrixMult(int[,] matrix1, string[,] matrix2)
+        static private string mult(int a, int b) {
+            string result = binaryMultiplication(Convert.ToString(a, 2), Convert.ToString(b, 2));
+            if (result.Length < 9)
+                return result;
+            else {
+                string answer = "";
+                do
+                {
+                    if (answer != "")
+                        answer = Convert.ToString(Convert.ToInt32(answer, 2), 2);
+
+                   answer = XOR(answer == ""? result:answer, "100011011".PadRight(answer == "" ? result.Length : answer.Length, '0'));
+                } while (Convert.ToInt32(answer, 2) > 255);
+
+                return answer;
+            }
+        }
+
+        static public string[,] MatrixMult(int[,] matrix1, int[,] matrix2)
         {
+            
             int[,] result = new int[matrix1.GetLength(0), matrix2.GetLength(1)];
 
             for (int i = 0; i < matrix1.GetLength(0); i++)
@@ -135,7 +160,7 @@ namespace SecurityLibrary.AES
                 {
                     for (int k = 0; k < matrix2.GetLength(1); k++)
                     {
-                        int multpliedValue = Convert.ToInt32(mult(matrix1[i, j], Convert.ToInt32(matrix2[j, k], 16)), 2);
+                        int multpliedValue = Convert.ToInt32(mult(matrix1[i, j], matrix2[j, k]), 2);
                         if (result[i, k] == 0)
                             result[i, k] += multpliedValue;
                         else

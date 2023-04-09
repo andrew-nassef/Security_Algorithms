@@ -11,42 +11,96 @@ namespace SecurityLibrary.AES
     /// </summary>
     public class AES : CryptographicTechnique
     {
-      
-        public override string Decrypt(string cipherText, string key)
-        {
-            throw new NotImplementedException();
-        }
+        /*
+         * 1. Key Expansion: The same key used for encryption is used for decryption, so the first step is to expand the key. This involves generating a series of round keys from the original key using a key schedule.
 
-        private string[,] toMatrix(string str)
+            2. Add Round Key: In this step, the final round key is XORed with the last block of ciphertext to obtain the first block of plaintext.
+
+            3. Inverse Shift Rows: The rows of the block are shifted to the right. The number of shifts is the inverse of the number of shifts used in the shift rows step during encryption.
+
+            4. Inverse SubBytes: The inverse S-box is applied to each byte of the block.
+
+            5. Add Round Key: The round key generated in step 1 is XORed with the block.
+
+            6. Inverse MixColumns: This step involves applying an inverse matrix operation to each column of the block.
+
+            7. Repeat steps 3 to 6: The inverse shift rows, inverse subbytes, inverse mixcolumns, and add round key steps are repeated for each round of decryption.
+
+            8. Final Round: In the final round, the inverse shift rows, inverse subbytes, and add round key steps are performed as in the previous rounds. However, the inverse mixcolumns step is omitted.
+
+            Output: The result of the final round is the decrypted plaintext.
+         * 
+         * 
+         * */
+
+        private string[,] inverseShiftRows(string[,] matrix) 
         {
-            string[,] matrix = new string[4, 4];
-            int indexer = 2;
-            for(int i = 0; i < matrix.GetLength(0); i++)
+            string[,] result = new string[matrix.GetLength(0), matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                for(int j = 0;j<matrix.GetLength(1); j++)
+                for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    matrix[j, i] += str[indexer];
-                    matrix[j, i] += str[indexer + 1];
-                    indexer += 2;
+                    result[i, j] = matrix[i, (j - i + matrix.GetLength(1)) % matrix.GetLength(1)];
                 }
             }
-            return matrix;
-            
+            return result;
+        }   
+        private string[,] inverseSubBytes(string[,] matrix)
+        {
+            string[,] result = new string[matrix.GetLength(0), matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    result[i, j] = Matrices.replaceFromReversedSBox(matrix[i, j]);
+                }
+            }
+                    return result;
+        }
+        private string[,] inverseMixColumn(string[,] matrix)
+        {
+            return Matrices.MatrixMult(Matrices.RijndaelInverseMixColumnsMatrix,HelperMethods.matrixToInt(matrix));
         }
 
-        private string fixLength(string s, int length) {
-            string tmp = "";
-            for (int i = 0; i < length - s.Length; i++)
+        public override string Decrypt(string cipherText, string key)
+        {
+            string[,] keyMatrix = HelperMethods.toMatrix(key);
+            string[,] cipherMatrix = HelperMethods.toMatrix(cipherText);
+            Dictionary<int, string[,]> keys = new Dictionary<int, string[,]>();
+            for(int i = 1; i <= 10; i++)
             {
-                tmp += "0";
+                if(i == 1)
+                    keys[i] = generateRoundKey(keyMatrix, i);
+                else
+                    keys[i] = generateRoundKey(keys[i - 1], i);
             }
-            return tmp + s;
+
+            string[,] matrix = new string[cipherMatrix.GetLength(0), cipherMatrix.GetLength(1)];
+
+            for (int i = 10; i >=1; i--)
+            {
+                if(i == 10)
+                    matrix = addRoundKey(keys[i], cipherMatrix);
+                else
+                    matrix = addRoundKey(keys[i], matrix);
+                if(i != 10)
+                    matrix = inverseMixColumn(matrix);
+                matrix = inverseShiftRows(matrix);
+                matrix = inverseSubBytes(matrix);
+            }
+            //final round (round: 0)
+            matrix = addRoundKey(matrix, keyMatrix);
+
+            return toString(matrix);
         }
-        
+
+        private string fixLength(string s, int length) => s.PadLeft(length, '0');
+
         private string XOR(string v1, string v2)
         {
-            v1 = Convert.ToString(Convert.ToInt32(v1, 16), 2);
-            v2 = Convert.ToString(Convert.ToInt32(v2, 16), 2);
+            v1 = HelperMethods.HexaToBinary(v1);
+            v2 = HelperMethods.HexaToBinary(v2);
+
             int fixedLength = Math.Max(v1.Length, v2.Length);
 
             if(v1.Length < fixedLength)
@@ -68,16 +122,15 @@ namespace SecurityLibrary.AES
 
         }
 
-        private string[,] addRoundKey(string[,] plainMatrix, string[,] keyMatrix)
+        private string[,] addRoundKey(string[,] matrix, string[,] keyMatrix)
         {
-            string[,] result = new string[plainMatrix.GetLength(0), plainMatrix.GetLength(1)];
-            for(int i = 0;i < plainMatrix.GetLength(0); i++)
+            string[,] result = new string[matrix.GetLength(0), matrix.GetLength(1)];
+            for(int i = 0;i < matrix.GetLength(0); i++)
             {
-                for(int j =0;j < plainMatrix.GetLength(1); j++)
+                for(int j =0;j < matrix.GetLength(1); j++)
                 {
-                    string answer = XOR(plainMatrix[i, j], keyMatrix[i, j]);
-                    int a = Convert.ToInt32(answer, 2);
-                    result[i, j] = Convert.ToInt32(a).ToString("X");
+                    string answer = XOR(matrix[i, j], keyMatrix[i, j]);
+                    result[i, j] = HelperMethods.BinaryToHexa(answer);
                 }
             }
 
@@ -111,7 +164,7 @@ namespace SecurityLibrary.AES
             return result;
         }
         private string[,] mixColumns(string[,] matrix) {
-            return Matrices.MatrixMult(Matrices.RijndaelMixColumnsMatrix, matrix); ;
+            return Matrices.MatrixMult(Matrices.RijndaelMixColumnsMatrix, HelperMethods.matrixToInt(matrix));
         }
         private string[,] generateRoundKey(string[,] prevKey, int round) {
             string[,] key = new string[prevKey.GetLength(0), prevKey.GetLength(1)];
@@ -122,17 +175,20 @@ namespace SecurityLibrary.AES
                     if(i > 0)
                     {
                         key[j, i] = XOR(key[j, i - 1], prevKey[j, i]);
-                        key[j, i] = Convert.ToInt32(key[j, i], 2).ToString("X");
+                        key[j, i] = HelperMethods.toHexa(key[j, i]);
                     }
                     else
                     {
+                        // 1. shift row
                         key[j, i] = prevKey[(j + 1)% key.GetLength(1), prevKey.GetLength(0) - 1];
+                        // 2. sub bytes
                         key[j, i] = Matrices.replaceFromSBox(key[j, i]);
+                        // 3. XOR with value from previous key
                         string x1 = XOR(key[j, i], prevKey[j, i]);
-                        x1 = Convert.ToInt32(x1, 2).ToString("X");
-                        string val = Matrices.RCtable[round - 1, j].ToString("X");
+                        x1 = HelperMethods.toHexa(x1);
+                        // 4. XOR with RC table
                         key[j, i] = XOR(x1, Matrices.RCtable[round - 1, j].ToString("X"));
-                        key[j, i] = Convert.ToInt32(key[j, i], 2).ToString("X");
+                        key[j, i] = HelperMethods.toHexa(key[j, i]);
                         //xor
                     }
                 }
@@ -140,15 +196,15 @@ namespace SecurityLibrary.AES
             return key;
         }
         public string[,] initiateState(string plainText, string key) {
-            string[,] plainMatrix = toMatrix(plainText);
-            string[,] keyMatrix = toMatrix(key);
+            string[,] plainMatrix = HelperMethods.toMatrix(plainText);
+            string[,] keyMatrix = HelperMethods.toMatrix(key);
             return addRoundKey(plainMatrix, keyMatrix);
         }
         public override string Encrypt(string plainText, string key)
         {
             //initial state
             string[,] matrix = initiateState(plainText, key);
-            string[,] keyMatrix = toMatrix(key);
+            string[,] keyMatrix = HelperMethods.toMatrix(key);
             for (int i = 1; i <= 10; i++)
             {
                 keyMatrix = generateRoundKey(keyMatrix ,i);
@@ -175,6 +231,6 @@ namespace SecurityLibrary.AES
             }
             return str;
         }
-
+            
     }
 }
