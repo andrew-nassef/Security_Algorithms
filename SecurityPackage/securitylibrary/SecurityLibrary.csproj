@@ -45,6 +45,7 @@
     <Compile Include="AES\ExtendedEuclid.cs" />
     <Compile Include="AES\HelperMethods.cs" />
     <Compile Include="AES\Matrices.cs" />
+    <Compile Include="AES\Round.cs" />
     <Compile Include="ICryptographic_Technique.cs" />
     <Compile Include="CryptographicTechnique.cs" />
     <Compile Include="ElGamal\ELGAMAL.cs" />
