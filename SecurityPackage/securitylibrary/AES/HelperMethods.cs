@@ -42,7 +42,7 @@ namespace SecurityLibrary.AES
         public static string toHexa(int n) => n.ToString("X");
         public static string toHexa(string n) => Convert.ToInt32(n, 2).ToString("X");
 
-        public static string HexaToBinary(string s) => Convert.ToString(Convert.ToInt32(s, 16), 2);
+        public static string HexaToBinary(string s) => Convert.ToString(Convert.ToInt64(s, 16), 2);
         public static string BinaryToHexa(string s) => Convert.ToInt32(s, 2).ToString("X");
 
 
