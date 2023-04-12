@@ -11,28 +11,68 @@ namespace SecurityLibrary.AES
     /// </summary>
     public class AES : CryptographicTechnique
     {
-        /*
-         * 1. Key Expansion: The same key used for encryption is used for decryption, so the first step is to expand the key. This involves generating a series of round keys from the original key using a key schedule.
+        // 1. common functions-------------------------------
+        //start 
+        private string fixLength(string s, int length) => s.PadLeft(length, '0');
 
-            2. Add Round Key: In this step, the final round key is XORed with the last block of ciphertext to obtain the first block of plaintext.
+        private string XOR(string v1, string v2)
+        {
+            v1 = HelperMethods.HexaToBinary(v1);
+            v2 = HelperMethods.HexaToBinary(v2);
 
-            3. Inverse Shift Rows: The rows of the block are shifted to the right. The number of shifts is the inverse of the number of shifts used in the shift rows step during encryption.
+            int fixedLength = Math.Max(v1.Length, v2.Length);
 
-            4. Inverse SubBytes: The inverse S-box is applied to each byte of the block.
+            if (v1.Length < fixedLength)
+                v1 = fixLength(v1, fixedLength);
 
-            5. Add Round Key: The round key generated in step 1 is XORed with the block.
+            else if (v2.Length < fixedLength)
+                v2 = fixLength(v2, fixedLength);
 
-            6. Inverse MixColumns: This step involves applying an inverse matrix operation to each column of the block.
+            string XOR_value = "";
+            for (int i = 0; i < fixedLength; i++)
+            {
+                if (v1[i] != v2[i])
+                    XOR_value += "1";
+                else
+                    XOR_value += "0";
+            }
 
-            7. Repeat steps 3 to 6: The inverse shift rows, inverse subbytes, inverse mixcolumns, and add round key steps are repeated for each round of decryption.
+            return XOR_value;
 
-            8. Final Round: In the final round, the inverse shift rows, inverse subbytes, and add round key steps are performed as in the previous rounds. However, the inverse mixcolumns step is omitted.
+        }
+        private string[,] generateRoundKey(string[,] prevKey, int round)
+        {
+            string[,] key = new string[prevKey.GetLength(0), prevKey.GetLength(1)];
+            for (int i = 0; i < key.GetLength(0); i++)
+            {
+                for (int j = 0; j < key.GetLength(1); j++)
+                {
+                    if (i > 0)
+                    {
+                        key[j, i] = XOR(key[j, i - 1], prevKey[j, i]);
+                        key[j, i] = HelperMethods.toHexa(key[j, i]);
+                    }
+                    else
+                    {
+                        // 1. shift row
+                        key[j, i] = prevKey[(j + 1) % key.GetLength(1), prevKey.GetLength(0) - 1];
+                        // 2. sub bytes
+                        key[j, i] = Matrices.replaceFromSBox(key[j, i]);
+                        // 3. XOR with value from previous key
+                        string x1 = XOR(key[j, i], prevKey[j, i]);
+                        x1 = HelperMethods.toHexa(x1);
+                        // 4. XOR with RC table
+                        key[j, i] = XOR(x1, Matrices.RCtable[round - 1, j].ToString("X"));
+                        key[j, i] = HelperMethods.toHexa(key[j, i]);
+                        //xor
+                    }
+                }
+            }
+            return key;
+        }
+        // end of common functions section-------------------------------------------
 
-            Output: The result of the final round is the decrypted plaintext.
-         * 
-         * 
-         * */
-
+        //-------------------- 2.) decrypt section ------------------------------------------------------------------
         private string[,] inverseShiftRows(string[,] matrix) 
         {
             string[,] result = new string[matrix.GetLength(0), matrix.GetLength(1)];
@@ -91,37 +131,12 @@ namespace SecurityLibrary.AES
             //final round (round: 0)
             matrix = addRoundKey(matrix, keyMatrix);
 
-            return toString(matrix);
+            return HelperMethods.toString(matrix);
         }
+        //---------------------------------------- End Decrypt-------------------------
 
-        private string fixLength(string s, int length) => s.PadLeft(length, '0');
 
-        private string XOR(string v1, string v2)
-        {
-            v1 = HelperMethods.HexaToBinary(v1);
-            v2 = HelperMethods.HexaToBinary(v2);
-
-            int fixedLength = Math.Max(v1.Length, v2.Length);
-
-            if(v1.Length < fixedLength)
-                v1 = fixLength(v1, fixedLength);
-           
-            else if(v2.Length < fixedLength)
-                v2 = fixLength(v2, fixedLength);
-
-            string XOR_value = "";
-            for (int i = 0; i < fixedLength; i++)
-            {
-                if (v1[i] != v2[i])
-                    XOR_value += "1";
-                else 
-                    XOR_value += "0";
-            }
-            
-            return XOR_value;
-
-        }
-
+        //----------------------------------------- 3.) Encrypt section ----------------------------
         private string[,] addRoundKey(string[,] matrix, string[,] keyMatrix)
         {
             string[,] result = new string[matrix.GetLength(0), matrix.GetLength(1)];
@@ -166,35 +181,7 @@ namespace SecurityLibrary.AES
         private string[,] mixColumns(string[,] matrix) {
             return Matrices.MatrixMult(Matrices.RijndaelMixColumnsMatrix, HelperMethods.matrixToInt(matrix));
         }
-        private string[,] generateRoundKey(string[,] prevKey, int round) {
-            string[,] key = new string[prevKey.GetLength(0), prevKey.GetLength(1)];
-            for (int i = 0;i <key.GetLength(0);i++) 
-            {
-                for(int j= 0;j < key.GetLength(1); j++)
-                {
-                    if(i > 0)
-                    {
-                        key[j, i] = XOR(key[j, i - 1], prevKey[j, i]);
-                        key[j, i] = HelperMethods.toHexa(key[j, i]);
-                    }
-                    else
-                    {
-                        // 1. shift row
-                        key[j, i] = prevKey[(j + 1)% key.GetLength(1), prevKey.GetLength(0) - 1];
-                        // 2. sub bytes
-                        key[j, i] = Matrices.replaceFromSBox(key[j, i]);
-                        // 3. XOR with value from previous key
-                        string x1 = XOR(key[j, i], prevKey[j, i]);
-                        x1 = HelperMethods.toHexa(x1);
-                        // 4. XOR with RC table
-                        key[j, i] = XOR(x1, Matrices.RCtable[round - 1, j].ToString("X"));
-                        key[j, i] = HelperMethods.toHexa(key[j, i]);
-                        //xor
-                    }
-                }
-            }
-            return key;
-        }
+        // make initial round (round 0)
         public string[,] initiateState(string plainText, string key) {
             string[,] plainMatrix = HelperMethods.toMatrix(plainText);
             string[,] keyMatrix = HelperMethods.toMatrix(key);
@@ -205,32 +192,20 @@ namespace SecurityLibrary.AES
             //initial state
             string[,] matrix = initiateState(plainText, key);
             string[,] keyMatrix = HelperMethods.toMatrix(key);
+            //apply for 10 rounds 
             for (int i = 1; i <= 10; i++)
             {
                 keyMatrix = generateRoundKey(keyMatrix ,i);
                 matrix = subBytes(matrix);
                 matrix = shiftRows(matrix);
+                // mix columns for only first 9 rounds
                 if(i != 10)
                     matrix = mixColumns(matrix);
                 matrix = addRoundKey(matrix, keyMatrix);
             }
-            return toString(matrix);
+            return HelperMethods.toString(matrix);
         }
+        //----------------------------------------- end Encrypt----------------------------
 
-        public string toString(string[,] matrix) {
-            string str = "0x";
-            for(int i = 0;i < matrix.GetLength(0);i++)
-            {
-                for(int j = 0;j < matrix.GetLength(1); j++)
-                {
-                    if (matrix[j, i].Length == 1)
-                        str += "0" + matrix[j, i];
-                    else
-                        str += matrix[j, i];
-                }
-            }
-            return str;
-        }
-            
     }
 }

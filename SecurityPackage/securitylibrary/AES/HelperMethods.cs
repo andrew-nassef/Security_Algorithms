@@ -45,5 +45,22 @@ namespace SecurityLibrary.AES
         public static string HexaToBinary(string s) => Convert.ToString(Convert.ToInt32(s, 16), 2);
         public static string BinaryToHexa(string s) => Convert.ToInt32(s, 2).ToString("X");
 
+
+        public static string toString(string[,] matrix)
+        {
+            string str = "0x";
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (matrix[j, i].Length == 1)
+                        str += "0" + matrix[j, i];
+                    else
+                        str += matrix[j, i];
+                }
+            }
+            return str;
+        }
+
     }
 }

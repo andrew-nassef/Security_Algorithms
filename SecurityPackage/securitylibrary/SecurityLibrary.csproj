@@ -46,6 +46,7 @@
     <Compile Include="AES\HelperMethods.cs" />
     <Compile Include="AES\Matrices.cs" />
     <Compile Include="AES\Round.cs" />
+    <Compile Include="DES\Matrices.cs" />
     <Compile Include="ICryptographic_Technique.cs" />
     <Compile Include="CryptographicTechnique.cs" />
     <Compile Include="ElGamal\ELGAMAL.cs" />
