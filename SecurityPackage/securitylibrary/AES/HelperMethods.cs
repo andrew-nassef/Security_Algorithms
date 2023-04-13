@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecurityLibrary.AES
 {
-    public class HelperMethods
+    internal class HelperMethods
     {
 
         // convert given fixed size string to a 4 * 4 matrix

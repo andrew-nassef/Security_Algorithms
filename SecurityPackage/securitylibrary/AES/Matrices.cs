@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecurityLibrary.AES
 {
-    public class Matrices
+    internal class Matrices
     {
         public static byte[,] SBox = new byte[,]
         {
