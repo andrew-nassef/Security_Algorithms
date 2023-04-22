@@ -24,3 +24,9 @@ C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\Sec
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.CoreCompileInputs.cache
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.dll
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.pdb
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\bin\Debug\SecurityLibrary.dll
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\bin\Debug\SecurityLibrary.pdb
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.AssemblyReference.cache
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.csproj.CoreCompileInputs.cache
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.dll
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityLibrary\obj\Debug\SecurityLibrary.pdb

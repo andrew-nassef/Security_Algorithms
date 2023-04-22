@@ -44,3 +44,12 @@ C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\Sec
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.csproj.CopyComplete
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.dll
 C:\Users\mohey\OneDrive\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.pdb
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\bin\Debug\SecurityPackageTest.dll
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\bin\Debug\SecurityPackageTest.pdb
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\bin\Debug\SecurityLibrary.dll
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\bin\Debug\SecurityLibrary.pdb
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.csproj.AssemblyReference.cache
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.csproj.CoreCompileInputs.cache
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.csproj.CopyComplete
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.dll
+C:\Users\BASANT\Documents\GitHub\Security_Algorithms\SecurityPackage\SecurityPackageTest\obj\Debug\SecurityPackageTest.pdb
