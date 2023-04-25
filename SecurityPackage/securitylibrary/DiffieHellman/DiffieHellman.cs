@@ -15,7 +15,6 @@ namespace SecurityLibrary.DiffieHellman
             {
                 key = (key * alpha) % q;
                 x--;
-
             }
             return key;
         }
